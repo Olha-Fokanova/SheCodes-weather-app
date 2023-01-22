@@ -171,6 +171,11 @@ body {
 
 #description {
     margin-top: 20px;
+
+}
+
+#description::first-letter {
+    text-transform: capitalize;
 }
 
 .github-link a {
@@ -181,4 +186,13 @@ body {
 .github-link {
     margin: 20px auto;
     text-align: center;
+}
+
+.degree.active {
+    color: #5A6275;
+    cursor: default;
+}
+
+.degree.active:hover {
+    text-decoration: none;
 }

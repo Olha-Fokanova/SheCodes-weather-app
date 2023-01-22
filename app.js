@@ -1,34 +1,44 @@
-let now = new Date();
 let currentDate = document.querySelector("#date");
-let days = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Satturday",
-];
-let day = days[now.getDay()];
-let months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-let month = months[now.getMonth()];
-let date = now.getDate();
-let hour = addZero(now.getHours());
-let minute = addZero(now.getMinutes());
+function formatDate(timestamp) {
+  console.log(timestamp);
+  let now;
+  if (typeof timestamp == "undefined") {
+    now = new Date();
+  } else {
+    now = new Date(timestamp);
+  }
+  let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  let day = days[now.getDay()];
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  let month = months[now.getMonth()];
+  let date = now.getDate();
+  let hour = addZero(now.getHours());
+  let minute = addZero(now.getMinutes());
+  return `${day}, ${month} ${date}, ${hour}:${minute}`;
+}
 
+// Add zero for dates without leading zero
 function addZero(number) {
   if (number < 10) {
     return "0" + number;
@@ -37,34 +47,52 @@ function addZero(number) {
   }
 }
 
-currentDate.innerHTML = `${day}, ${month} ${date}, ${hour}:${minute}`;
+// handle temp measurement switch
+let celsiusLink = document.querySelector("#celsius");
+celsiusLink.addEventListener("click", changeAllTemp);
+let fahrenheitLink = document.querySelector("#fahrenheit");
+fahrenheitLink.addEventListener("click", changeAllTemp);
+
+currentDate.innerHTML = formatDate();
+
 function search(event) {
   event.preventDefault();
   let input = document.querySelector("#search-input");
   let city = document.querySelector("#city-name");
   city.innerHTML = input.value;
 }
+
 let form = document.querySelector("#search-form");
 form.addEventListener("submit", search);
 
 let initialFormat = "celsius";
 
+// Recalculate all temp elements
 function changeAllTemp(event) {
-  let currentFormat = event.target.id;
+  let selectedFormat = event.target.id;
 
-  if (currentFormat == initialFormat) {
+  if (selectedFormat == initialFormat) {
     return;
   }
-  initialFormat = currentFormat;
+  initialFormat = selectedFormat;
 
   let elements = document.querySelectorAll(".degrees, .number");
   elements.forEach((element) => {
     let temp = parseInt(element.innerHTML);
-    if (currentFormat === "celsius") {
+
+    if (selectedFormat === "celsius") {
+      // F to C
       temp = convertFahrenheitToCelsius(temp);
-    } else if (currentFormat === "fahrenheit") {
+      celsiusLink.classList.add("active");
+      fahrenheitLink.classList.remove("active");
+    } else if (selectedFormat === "fahrenheit") {
+      // C to F
       temp = convertCelciusToFahrenheit(temp);
+      celsiusLink.classList.remove("active");
+      fahrenheitLink.classList.add("active");
     } else {
+      // Unknown measurement. Do nothing
+      console.warn("Unknown measurement. Do nothing");
       return;
     }
     element.innerHTML = temp;
@@ -74,18 +102,14 @@ function changeAllTemp(event) {
   primeTemp.innerHTML = parseInt(primeTemp.innerHTML);
 }
 
+// C to F
 function convertCelciusToFahrenheit(temp) {
   return Math.round(temp * 1.8 + 32) + "°F";
 }
+// F to C
 function convertFahrenheitToCelsius(temp) {
   return Math.round((temp - 32) / 1.8) + "°C";
 }
-
-let celsiusLink = document.querySelector("#celsius");
-celsiusLink.addEventListener("click", changeAllTemp);
-
-let fahrenheitLink = document.querySelector("#fahrenheit");
-fahrenheitLink.addEventListener("click", changeAllTemp);
 
 //Engine
 
@@ -123,6 +147,8 @@ function displayTemperature(response) {
   let currentCity = response.data.name;
   let cityContainer = document.querySelector("#city-name");
   cityContainer.innerHTML = currentCity;
+
+  // currentDate.innerHTML = formatDate(response.data.dt * 1000);
 }
 
 let currentButton = document.querySelector("#current-btn");
@@ -158,6 +184,8 @@ function displayTempByCity(response) {
   let input = document.querySelector("#search-input");
   let city = document.querySelector("#city-name");
   city.innerHTML = input.value;
+
+  currentDate.innerHTML = formatDate(response.data.dt * 1000);
 }
 let searchButton = document.querySelector("#search-btn");
 searchButton.addEventListener("click", requestTempByCity);
