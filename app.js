@@ -1,3 +1,14 @@
+const shecodesApiKey = "eb00b292o04et83554f3aa07227aa52c";
+
+let days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 let currentDate = document.querySelector("#date");
 function formatDate(timestamp) {
   console.log(timestamp);
@@ -7,15 +18,6 @@ function formatDate(timestamp) {
   } else {
     now = new Date(timestamp);
   }
-  let days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
   let day = days[now.getDay()];
   let months = [
     "January",
@@ -218,7 +220,10 @@ function requestForecastByPosition(myPosition) {
   let lon = myPosition.coords.longitude;
   let apiURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
 
+  const shecodesApiUrl = `https://api.shecodes.io/weather/v1/forecast?lon=${lon}&lat=${lat}&key=${shecodesApiKey}`;
+
   axios.get(`${apiURL}&appid=${apiKey}`).then(displayForecast);
+  axios.get(shecodesApiUrl).then(displayDailyForecast);
 }
 
 function displayForecast(response) {
@@ -227,7 +232,7 @@ function displayForecast(response) {
   let hourList = list.slice(0, 4);
 
   displayHourlyForecast(hourList);
-  displayDailyForecast();
+  // displayDailyForecast();
 }
 function displayHourlyForecast(hourlySet) {
   console.log("12 hours", hourlySet);
@@ -237,16 +242,33 @@ function displayHourlyForecast(hourlySet) {
     let hourContainer = document.querySelector(hourContainerId);
     const data = hourlySet[i];
     const time = new Date(data.dt * 1000);
-    let hour = addZero(time.getHours());
-    let minute = addZero(time.getMinutes());
+    const hour = addZero(time.getHours());
+    const minute = addZero(time.getMinutes());
+    const iconUrl = data.weather[0].icon;
+    const temp = Math.round(data.main.temp);
     hourContainer.innerHTML = `<div class="hour">${hour}:${minute}</div>
-                    <div class="emoji-2"><img src="src/icons/${
-                      data.weather[0].icon
-                    }.png" width ="40" height="40"/></div>
-                    <div class="degrees">${Math.round(data.main.temp)}°C</div>`;
+                    <div class="emoji-2"><img src="src/icons/${iconUrl}.png" width ="40" height="40"/></div>
+                    <div class="degrees">${temp}°C</div>`;
   }
 }
-function displayDailyForecast(dailySet) {}
+function displayDailyForecast(response) {
+  console.log("SheCodes API response:", response);
+  // Skipping first day
+  for (let i = 1; i < 5; i++) {
+    const day = response.data.daily[i];
+    const dayContainerId = "#day" + i;
+
+    let dayContainer = document.querySelector(dayContainerId);
+
+    const time = new Date(day.time * 1000);
+    const dayOfWeek = days[time.getDay()].slice(0, 3);
+    const iconUrl = day.condition.icon_url;
+    const temp = Math.round(day.temperature.day);
+    dayContainer.innerHTML = `<div class="hour">${dayOfWeek}</div>
+                    <div class="emoji-2"><img src="${iconUrl}" width ="40" height="40"/></div>
+                    <div class="degrees">${temp}°C</div>`;
+  }
+}
 
 function requestForecastByCity() {
   let input = document.querySelector("#search-input");
@@ -255,7 +277,10 @@ function requestForecastByCity() {
 
   let apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${input.value}&appid=${apiKey}&units=metric`;
 
+  const shecodesApiUrl = `https://api.shecodes.io/weather/v1/forecast?query=${input.value}&key=${shecodesApiKey}`;
+
   axios.get(`${apiURL}&appid=${apiKey}`).then(displayForecast);
+  axios.get(shecodesApiUrl).then(displayDailyForecast);
 }
 let hourButton = document.querySelector("#hour-button");
 hourButton.addEventListener("click", () => {
