@@ -211,3 +211,9 @@ body {
 .hidden {
     display: none;
 }
+
+#wind-direction {
+    display: inline-block;
+
+
+}

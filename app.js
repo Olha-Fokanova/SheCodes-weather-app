@@ -162,6 +162,10 @@ function displayTemperature(response) {
   let windSpeed = document.querySelector("#wind");
   windSpeed.innerHTML = Math.round(wind);
 
+  document.querySelector(
+    "#wind-direction"
+  ).style.transform = `rotate(${response.data.wind.deg}deg)`;
+
   // currentDate.innerHTML = formatDate(response.data.dt * 1000);
 }
 
@@ -195,9 +199,6 @@ function displayTempByCity(response) {
   let descriptionContainer = document.querySelector("#description");
   descriptionContainer.innerHTML = description;
 
-  let humidity = response.data.main.humidity;
-  console.log(humidity);
-
   let icon = response.data.weather[0].icon;
   let locationIcon = document.querySelector(".weather-icon");
   locationIcon.innerHTML = `<img src="src/icons/${icon}.png"/>`;
@@ -206,6 +207,19 @@ function displayTempByCity(response) {
   city.innerHTML = input.value;
 
   currentDate.innerHTML = formatDate(response.data.dt * 1000);
+
+  let humidity = response.data.main.humidity;
+  console.log(humidity);
+  let humidityContainer = document.querySelector("#humidity");
+  humidityContainer.innerHTML = humidity;
+
+  let wind = response.data.wind.speed;
+  let windSpeed = document.querySelector("#wind");
+  windSpeed.innerHTML = Math.round(wind);
+
+  document.querySelector(
+    "#wind-direction"
+  ).style.transform = `rotate(${response.data.wind.deg}deg)`;
 }
 let searchButton = document.querySelector("#search-btn");
 searchButton.addEventListener("click", () => {
