@@ -46,14 +46,14 @@
 
                 </div>
                 <div class="rectangle-btn-container">
-                    <button class="rectangle-btn-1">Hours</button>
-                    <button class="rectangle-btn-2">Days</button>
+                    <button class="rectangle-btn active" id="hour-button">Hours</button>
+                    <button class="rectangle-btn" id="day-button">Days</button>
                 </div>
             </div>
 
         </section>
         <footer>
-            <div class="footer-container">
+            <div class="footer-container" id="hours">
                 <div class="hour-temperature-container" id="hour1">
                     <div class="hour">15:00</div>
                     <div class="emoji-2">⛈️</div>
@@ -74,6 +74,33 @@
 
                 <div class="hour-temperature-container" id="hour4">
                     <div class="hour">00:00</div>
+                    <div class="emoji-2">🌙</div>
+                    <div class="degrees">-2°C</div>
+                </div>
+
+            </div>
+
+            <div class="footer-container hidden" id="days">
+                <div class="hour-temperature-container" id="day1">
+                    <div class="hour">Mon</div>
+                    <div class="emoji-2">⛈️</div>
+                    <div class="degrees">+3°C</div>
+                </div>
+
+                <div class="hour-temperature-container" id="day2">
+                    <div class="hour">Tue</div>
+                    <div class="emoji-2">🌧️</div>
+                    <div class="degrees">+1°C</div>
+                </div>
+
+                <div class="hour-temperature-container" id="day3">
+                    <div class="hour">Wed</div>
+                    <div class="emoji-2">☁️</div>
+                    <div class="degrees">+1°C</div>
+                </div>
+
+                <div class="hour-temperature-container" id="day4">
+                    <div class="hour">Thu</div>
                     <div class="emoji-2">🌙</div>
                     <div class="degrees">-2°C</div>
                 </div>

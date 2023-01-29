@@ -257,3 +257,17 @@ function requestForecastByCity() {
 
   axios.get(`${apiURL}&appid=${apiKey}`).then(displayForecast);
 }
+let hourButton = document.querySelector("#hour-button");
+hourButton.addEventListener("click", () => {
+  document.querySelector("#hours").classList.remove("hidden");
+  document.querySelector("#days").classList.add("hidden");
+  hourButton.classList.add("active");
+  daysButton.classList.remove("active");
+});
+let daysButton = document.querySelector("#day-button");
+daysButton.addEventListener("click", () => {
+  document.querySelector("#hours").classList.add("hidden");
+  document.querySelector("#days").classList.remove("hidden");
+  hourButton.classList.remove("active");
+  daysButton.classList.add("active");
+});
