@@ -20,8 +20,8 @@ body {
     background-color: #D9EDFD;
     color: #5A6275;
     text-align: center;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
 }
 
 .header-container h1 {
@@ -75,7 +75,7 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 70px 0;
+    margin: 50px 0 0 0;
     align-items: center;
     color: #5A6275;
     gap: 10px;
@@ -195,4 +195,15 @@ body {
 
 .degree.active:hover {
     text-decoration: none;
+}
+
+.humidity-wind-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 0 20px 20px 0;
+    font-size: 16px;
+    color: #5A6275;
+    gap: 10px;
+
 }

@@ -126,7 +126,10 @@ function requestTempByPosition(myPosition) {
   axios.get(`${apiURL}&appid=${apiKey}`).then(displayTemperature);
 }
 
-navigator.geolocation.getCurrentPosition(requestTempByPosition);
+navigator.geolocation.getCurrentPosition(function (pos) {
+  requestTempByPosition(pos);
+  requestForecastByPosition(pos);
+});
 
 function displayTemperature(response) {
   console.log(response.data);
@@ -148,12 +151,24 @@ function displayTemperature(response) {
   let cityContainer = document.querySelector("#city-name");
   cityContainer.innerHTML = currentCity;
 
+  let humidity = response.data.main.humidity;
+  console.log(humidity);
+  let humidityContainer = document.querySelector("#humidity");
+  humidityContainer.innerHTML = humidity;
+
+  let wind = response.data.wind.speed;
+  let windSpeed = document.querySelector("#wind");
+  windSpeed.innerHTML = Math.round(wind);
+
   // currentDate.innerHTML = formatDate(response.data.dt * 1000);
 }
 
 let currentButton = document.querySelector("#current-btn");
 currentButton.addEventListener("click", () => {
-  navigator.geolocation.getCurrentPosition(requestTempByPosition);
+  navigator.geolocation.getCurrentPosition(function (pos) {
+    requestTempByPosition(pos);
+    requestForecastByPosition(pos);
+  });
 });
 //Search by city
 
@@ -178,6 +193,9 @@ function displayTempByCity(response) {
   let descriptionContainer = document.querySelector("#description");
   descriptionContainer.innerHTML = description;
 
+  let humidity = response.data.main.humidity;
+  console.log(humidity);
+
   let icon = response.data.weather[0].icon;
   let locationIcon = document.querySelector(".weather-icon");
   locationIcon.innerHTML = `<img src="src/icons/${icon}.png"/>`;
@@ -188,4 +206,54 @@ function displayTempByCity(response) {
   currentDate.innerHTML = formatDate(response.data.dt * 1000);
 }
 let searchButton = document.querySelector("#search-btn");
-searchButton.addEventListener("click", requestTempByCity);
+searchButton.addEventListener("click", () => {
+  requestTempByCity();
+  requestForecastByCity();
+});
+
+// Daily/hourly forecast
+
+function requestForecastByPosition(myPosition) {
+  let lat = myPosition.coords.latitude;
+  let lon = myPosition.coords.longitude;
+  let apiURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+  axios.get(`${apiURL}&appid=${apiKey}`).then(displayForecast);
+}
+
+function displayForecast(response) {
+  console.log(response.data);
+  let list = response.data.list;
+  let hourList = list.slice(0, 4);
+
+  displayHourlyForecast(hourList);
+  displayDailyForecast();
+}
+function displayHourlyForecast(hourlySet) {
+  console.log("12 hours", hourlySet);
+  for (let i = 0; i < hourlySet.length; i++) {
+    const hourContainerId = "#hour" + (i + 1);
+
+    let hourContainer = document.querySelector(hourContainerId);
+    const data = hourlySet[i];
+    const time = new Date(data.dt * 1000);
+    let hour = addZero(time.getHours());
+    let minute = addZero(time.getMinutes());
+    hourContainer.innerHTML = `<div class="hour">${hour}:${minute}</div>
+                    <div class="emoji-2"><img src="src/icons/${
+                      data.weather[0].icon
+                    }.png" width ="40" height="40"/></div>
+                    <div class="degrees">${Math.round(data.main.temp)}°C</div>`;
+  }
+}
+function displayDailyForecast(dailySet) {}
+
+function requestForecastByCity() {
+  let input = document.querySelector("#search-input");
+  let city = document.querySelector("#city-name");
+  city.innerHTML = input.value;
+
+  let apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${input.value}&appid=${apiKey}&units=metric`;
+
+  axios.get(`${apiURL}&appid=${apiKey}`).then(displayForecast);
+}
