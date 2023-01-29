@@ -174,6 +174,7 @@ currentButton.addEventListener("click", () => {
   navigator.geolocation.getCurrentPosition(function (pos) {
     requestTempByPosition(pos);
     requestForecastByPosition(pos);
+    document.querySelector("#search-input").value = "";
   });
 });
 //Search by city
